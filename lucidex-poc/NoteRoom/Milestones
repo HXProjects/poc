@@ -1,0 +1,169 @@
+# Lucidex POC — Development Milestones
+
+## High-Level Timeline
+
+```mermaid
+gantt
+    title Lucidex POC — Full Development Timeline
+    dateFormat  YYYY-MM-DD
+    todayMarker on
+
+    section 🏗️ M1 Foundation
+    Project Setup & Solution Structure        :m1_1, 2026-04-21, 2d
+    Docker Compose Infrastructure             :m1_2, after m1_1, 2d
+    Shared Libraries Skeleton                 :m1_3, after m1_1, 3d
+    Database Schema & Migrations              :m1_4, after m1_3, 2d
+
+    section 🔌 M2 CBS Simulator
+    CBS Simulator API                         :m2_1, after m1_4, 2d
+    ICustomerDataSource Interface             :m2_2, after m1_3, 1d
+    Seed Data (Swedish customers)             :m2_3, after m2_1, 1d
+
+    section 👤 M3 KYC Risk Service
+    KYC API Endpoints                         :m3_1, after m2_3, 2d
+    Risk Scoring Engine                       :m3_2, after m3_1, 2d
+    CustomerRiskAssessed Event Publishing     :m3_3, after m3_2, 1d
+
+    section ⚙️ M4 Transaction Monitor
+    Transaction Ingestion API                 :m4_1, after m3_3, 2d
+    Rule Engine Implementation                :m4_2, after m4_1, 3d
+    Alert & Event Publishing                  :m4_3, after m4_2, 2d
+
+    section 📁 M5 Case Management
+    Case Management API                       :m5_1, after m4_3, 2d
+    Alert Consumer & Case Creation            :m5_2, after m5_1, 2d
+    CBS PII Resolution                        :m5_3, after m5_2, 1d
+
+    section 📄 M6 SAR Service
+    SAR Consumer & Draft Generation           :m6_1, after m5_3, 2d
+    AES-256 SAR Encryption                    :m6_2, after m6_1, 1d
+
+    section 🖥️ M7 Portal
+    Blazor Layout & API Key Auth              :m7_1, after m5_3, 2d
+    Transaction Submission View               :m7_2, after m7_1, 2d
+    Case & Alert Dashboard                    :m7_3, after m7_2, 2d
+    SAR Draft View                            :m7_4, after m7_3, 1d
+
+    section 🔍 M8 Observability
+    OpenTelemetry Wiring                      :m8_1, after m4_3, 2d
+    Seq Integration & Dashboards              :m8_2, after m8_1, 1d
+
+    section ☸️ M9 Kubernetes
+    K8s Manifests (all services)              :m9_1, after m7_4, 3d
+    Kind Cluster Setup & Validation           :m9_2, after m9_1, 2d
+
+    section ✅ M10 QA & Demo
+    Unit Tests                                :m10_1, after m4_2, 3d
+    Integration Tests (Testcontainers)        :m10_2, after m7_4, 3d
+    End-to-End Flow Validation                :m10_3, after m9_2, 2d
+    POC Demo & Review                         :milestone, after m10_3, 0d
+```
+
+---
+
+## Milestone Definitions
+
+```mermaid
+graph LR
+    subgraph M1["🏗️ M1\nFoundation\n~1 week"]
+        direction TB
+        M1A["✅ Solution compiles"]
+        M1B["✅ Docker Compose\nbrings up all infra"]
+        M1C["✅ DB schema created\nvia migrations"]
+        M1D["✅ Shared libs in place"]
+    end
+
+    subgraph M2["🔌 M2\nCBS Simulator\n~3 days"]
+        direction TB
+        M2A["✅ GET /customers/{id}\nreturns seed data"]
+        M2B["✅ ICustomerDataSource\nimplemented"]
+    end
+
+    subgraph M3["👤 M3\nKYC Service\n~1 week"]
+        direction TB
+        M3A["✅ Risk score\ncalculated from CBS data"]
+        M3B["✅ RiskProfile\nstored in DB"]
+        M3C["✅ CustomerRiskAssessed\nevent published"]
+    end
+
+    subgraph M4["⚙️ M4\nTransaction Monitor\n~1 week"]
+        direction TB
+        M4A["✅ Transaction ingested"]
+        M4B["✅ Rules evaluated"]
+        M4C["✅ AlertTriggered\nevent published"]
+    end
+
+    subgraph M5["📁 M5\nCase Management\n~1 week"]
+        direction TB
+        M5A["✅ Alert consumed\ncase auto-created"]
+        M5B["✅ PII resolved\nfrom CBS at display time"]
+        M5C["✅ Case status\nupdatable by analyst"]
+    end
+
+    subgraph M6["📄 M6\nSAR Service\n~3 days"]
+        direction TB
+        M6A["✅ SAR draft\nauto-generated"]
+        M6B["✅ Content\nAES-256 encrypted"]
+    end
+
+    subgraph M7["🖥️ M7\nPortal\n~1.5 weeks"]
+        direction TB
+        M7A["✅ All 3 flows\nvisible in UI"]
+        M7B["✅ Cases & alerts\ndisplayed with names"]
+        M7C["✅ SAR draft\nviewable"]
+    end
+
+    subgraph M8["🔍 M8\nObservability\n~3 days"]
+        direction TB
+        M8A["✅ All services\nlog to Seq"]
+        M8B["✅ Correlation ID\ntraces full flow"]
+    end
+
+    subgraph M9["☸️ M9\nKubernetes\n~1 week"]
+        direction TB
+        M9A["✅ All services\nrun on kind cluster"]
+        M9B["✅ Same images as\nDocker Compose"]
+    end
+
+    subgraph M10["✅ M10\nQA & Demo\n~1 week"]
+        direction TB
+        M10A["✅ Unit tests passing"]
+        M10B["✅ Integration tests\npassing"]
+        M10C["✅ All 3 flows\ndemonstrated live"]
+    end
+
+    M1 --> M2 --> M3 --> M4 --> M5 --> M6 --> M7
+    M2 --> M8
+    M4 --> M8
+    M7 --> M9 --> M10
+    M3 --> M10
+    M4 --> M10
+```
+
+---
+
+## Summary
+
+| Milestone | Duration | Focus | Key Deliverable |
+|-----------|----------|-------|-----------------|
+| **M1** | 1 week | Foundation | Working solution + infra |
+| **M2** | 3 days | CBS Integration | Seed data endpoint |
+| **M3** | 1 week | KYC Risk | Risk profiles stored |
+| **M4** | 1 week | Transaction Analysis | Alerts triggered |
+| **M5** | 1 week | Case Management | Cases auto-created |
+| **M6** | 3 days | SAR Generation | Encrypted SARs |
+| **M7** | 1.5 weeks | Portal UI | Full system visible |
+| **M8** | 3 days | Observability | Traces & logging |
+| **M9** | 1 week | Kubernetes | Cluster deployment |
+| **M10** | 1 week | QA & Demo | POC ready for demo |
+
+**Total: ~9 weeks to production-ready POC**
+Manifest
+Kind Cluster
+## Presentation
+POC Demo
+
+
+2026-04-18
+Initial architecture creation, analysis:
+Bedrock Claude Sonnet 4.6
